@@ -1,0 +1,33 @@
+package AIAW.eightpuzzle;
+
+import java.util.Arrays;
+
+public class PuzzleBoard {
+
+	private int[][] tiles_;
+	
+	public PuzzleBoard(int[][] tiles) {
+		if (null == tiles || tiles.length <= 0) {
+		  throw new IllegalArgumentException();
+		}
+		
+		tiles_ = new int[tiles.length][tiles[0].length];
+		
+		for (int i = 0; i < tiles.length; ++i) {
+			tiles_[i] = Arrays.copyOf(tiles[i], tiles[i].length);
+		}
+	}
+	
+	public boolean equals(Object y) {
+		if (null == y || !(y instanceof PuzzleBoard)) {
+			return false;
+		}
+		
+		return Arrays.deepEquals(tiles_, ((PuzzleBoard)y).tiles_);
+		
+	}
+	
+	public Iterable<PuzzleBoard> neighboars() {
+		return null;
+	}
+}

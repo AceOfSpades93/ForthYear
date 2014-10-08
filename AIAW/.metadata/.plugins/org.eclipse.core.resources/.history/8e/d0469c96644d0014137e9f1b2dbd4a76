@@ -1,0 +1,21 @@
+package AIAW.eightpuzzle;
+
+import java.util.Arrays;
+
+public class PuzzleBoard {
+
+	private int[][] tiles_;
+	
+	public PuzzleBoard(int[][] tiles) {
+		
+	}
+	
+	public boolean equals(Object y) {
+		if (null == y || !(y instanceof PuzzleBoard)) {
+			return false;
+		}
+		
+		return Arrays.deepEquals(tiles_, ((PuzzleBoard)y).tiles_);
+		
+	}
+}

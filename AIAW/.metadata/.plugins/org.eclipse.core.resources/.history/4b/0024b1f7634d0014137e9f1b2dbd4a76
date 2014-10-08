@@ -1,0 +1,12 @@
+package AIAW.eightpuzzle;
+
+public class PuzzleBoard {
+
+	public PuzzleBoard(int[][] tiles) {
+		
+	}
+	
+	public Boolean equal(Object y) {
+		
+	}
+}
