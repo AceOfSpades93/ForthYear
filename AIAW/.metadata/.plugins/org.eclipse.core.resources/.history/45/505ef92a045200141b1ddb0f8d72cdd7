@@ -1,0 +1,19 @@
+package search;
+
+public class PuzzleSolver {
+	private PuzzleBoard initial;
+	private List<PuzzleBoard> sol = null;
+	
+	public PuzzleSolver(PuzzleBoard board) {
+		initial = board.clone();
+		
+		if (initial.isSolvable()) {
+			sol = new ArrayList<PuzzleBoard> ();
+		}
+	}
+	
+	public boolean isSolvable() {
+		return initial.isSolvable();
+	}
+	
+}

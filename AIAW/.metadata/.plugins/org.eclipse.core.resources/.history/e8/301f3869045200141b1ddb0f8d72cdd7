@@ -1,0 +1,26 @@
+package search;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class PuzzleSolver {
+	private PuzzleBoard initial;
+	private List<PuzzleBoard> sol = null;
+	
+	public PuzzleSolver(PuzzleBoard board) {
+		initial = board.clone();
+		
+		if (initial.isSolvable()) {
+			solve();
+		}
+	}
+	
+	public boolean isSolvable() {
+		return initial.isSolvable();
+	}
+	
+	public Iterable<PuzzleBoard> solution() {
+		return sol;
+	}
+	
+}

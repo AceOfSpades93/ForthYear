@@ -28,6 +28,10 @@ public class PuzzleBoard {
 		tiles_[hBlank][vBlank] = N * N;
 	}
 	
+	public PuzzleBoard clone() {
+		return new PuzzleBoard(tiles_);
+	}
+	
 	public int manhattan() {
 		int dist = 0;
 		
@@ -64,16 +68,26 @@ public class PuzzleBoard {
 			}
 		}
 		
-		int[] array = v.toArray(new int[]);
-		int numberOfInversions = countInversions(v.toArray(), 0, v.size() - 1);
+		int numberOfInversions = countInversions(v.toArray(new Integer[v.size()]), 0, v.size() - 1);
+		
+		return true;
 	}
 	
-	private int countInversions(int[] v, int start, int end) {
+	private int countInversions(Integer[] v, int start, int end) {
+		int count = 0;
 		
-		if (end >= start) {
-			return 0;
+		for (int i = start; i <= end; ++i) {
+			for (int j = i - 1; j >= 0; --j) {
+				if (v[j + 1] >= v[j]) {
+					break;
+				}
+				int aux = v[j + 1];
+				v[j + 1] = v[j];
+				v[j] = aux;
+			}
 		}
-		else 
+		
+		return count;
 	}
 
 	public Iterable<PuzzleBoard> neighbors() {

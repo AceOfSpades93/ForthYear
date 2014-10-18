@@ -1,0 +1,10 @@
+package search;
+
+public class PuzzleSolver {
+	private PuzzleBoard initial;
+	
+	public PuzzleSolver(PuzzleBoard board) {
+		initial = board.clone();
+	}
+	
+}
