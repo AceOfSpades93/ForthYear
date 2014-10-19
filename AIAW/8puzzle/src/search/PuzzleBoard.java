@@ -1,118 +1,181 @@
 package search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class PuzzleBoard {
-	private int N;
-	private int hBlank, vBlank;
-	private int[][] tiles_;
+	private int N_;
+	private int hBlank_ = -1;
+	private int vBlank_ = -1;
+	private int[][]  tiles_;
 	
 	public PuzzleBoard(int[][] tiles) {
-		if (null == tiles || 0 == tiles.length || tiles.length != tiles[0].length) {
-			throw new IllegalArgumentException();
+		if (!isInvalidBoard(tiles)) {
+			throw new IllegalArgumentException("Invalid board: " + toString());
 		}
 		
-		N = tiles.length;
+		N_ = tiles.length;
+		tiles_ = deepCopy(tiles);
 		
-		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < N; ++j) {
-				tiles_[i][j] = tiles[i][j];
-				if (0 == tiles[i][j]) {
-					hBlank = i;
-					vBlank = j;
+		for (int i = 0; i < N_; ++i) {
+			for (int j = 0; j < N_; ++j) {
+				if (0 == tiles[i][j] || N_ * N_ == tiles[i][j]) {
+					hBlank_ = i;
+					vBlank_ = j;
+					break;
 				}
 			}
-		}
-		
-		tiles_[hBlank][vBlank] = N * N;
-	}
-	
-	public PuzzleBoard clone() {
-		return new PuzzleBoard(tiles_);
-	}
-	
-	public int manhattan() {
-		int dist = 0;
-		
-		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < N; ++j) {
-				dist += Math.abs(i - tiles_[i][j] / N) + Math.abs(j - (tiles_[i][j] - 1) % N);
+			if (-1 != hBlank_ && -1 != vBlank_) {
+				break;
 			}
 		}
 		
-		return dist;
+		tiles_[hBlank_][vBlank_] = N_ * N_;
 	}
 	
-	public int hammilton() {
-		int dist = 0;
-		
-		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < N; ++j) {
-				if (i * N + j  + 1 != tiles_[i][j] ) {
-					++dist;
-				}
-			}
-		}
-		return dist;
+	public int getSize() {return N_;}
+	
+	public PuzzleBoard copy() {
+		tiles_[hBlank_][vBlank_] = 0;
+		PuzzleBoard b= new PuzzleBoard(tiles_);
+		tiles_[hBlank_][vBlank_] = N_ * N_;
+		return b;
 	}
 	
 	public boolean isSolvable() {
-		List<Integer> v = new ArrayList<>();
+		int inversions = 0;
+		int[] tiles = falttenArray(tiles_);
 		
-		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < N; ++j) {
-				if (tiles_[i][j] < N* N) {
-					v.add(tiles_[i][j]);
+		
+		for (int i = 1; i < tiles.length - 1; ++i) {
+			for (int j = i - 1; j >= 0; --j) {
+				if (tiles[j] > tiles[j + 1]) {
+					int aux = tiles[j];
+					tiles[j] = tiles[j + 1];
+					tiles[j + 1] = aux;
+					++inversions;
 				}
 			}
 		}
 		
-		int numberOfInversions = countInversions(v.toArray(new Integer[v.size()]), 0, v.size() - 1);
+		if (0 != N_ % 2) {
+			return 0 == inversions % 2;
+		}
 		
-		return true;
+		return (0 == inversions % 2) == (0 != (N_ - hBlank_ - 1) % 2);
 	}
 	
-	private int countInversions(Integer[] v, int start, int end) {
-		int count = 0;
-		
-		for (int i = start; i <= end; ++i) {
-			for (int j = i - 1; j >= 0; --j) {
-				if (v[j + 1] >= v[j]) {
-					break;
-				}
-				int aux = v[j + 1];
-				v[j + 1] = v[j];
-				v[j] = aux;
-			}
-		}
-		
-		return count;
-	}
 
+	public boolean isGoal() {
+		return 0 == hamming();
+	}
+	
 	public Iterable<PuzzleBoard> neighbors() {
 		int[] dx = {-1, 0, 0, 1};
 		int[] dy = {0, -1, 1, 0};
-		
 		List<PuzzleBoard> v = new ArrayList<>();
 		
 		for (int i = 0; i < dx.length; ++i) {
-			int newHBlank = hBlank + dx[i];
-			int newVBlank = vBlank + dy[i];
+			int newHBlank = hBlank_ + dx[i];
+			int newVBlank = vBlank_ + dy[i];
 			
-			if (newHBlank < 0 || newVBlank < 0 || newHBlank >= N || newVBlank >= N) {
+			if (newHBlank < 0 || newVBlank < 0 || newHBlank >= N_ || newVBlank >= N_) {
 				continue;
 			}
 			
-			PuzzleBoard b = new PuzzleBoard(tiles_);
-			
-			int aux = b.tiles_[newHBlank][newVBlank];
-			b.tiles_[newHBlank][newVBlank] = b.tiles_[hBlank][vBlank];
-			b.tiles_[hBlank][vBlank] = aux;
+			PuzzleBoard b = copy();
+			int aux = b.tiles_[hBlank_][vBlank_];
+			b.tiles_[hBlank_][vBlank_] = b.tiles_[newHBlank][newVBlank];
+			b.tiles_[newHBlank][newVBlank] = aux;
+			b.hBlank_ = newHBlank;
+			b.vBlank_ = newVBlank;
 			
 			v.add(b);
 		}
 		
 		return v;
+	}
+	
+	public int hamming() {
+		int dist = 0;
+		
+		for (int i = 0; i < N_; ++i) {
+			for (int j = 0; j < N_; ++j) {
+				if (i * N_ + j + 1 != tiles_[i][j]) {
+					++dist;
+				}
+			}
+		}
+		
+		return dist;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (null == obj || !(obj instanceof PuzzleBoard)) {
+			return false;
+		}
+		PuzzleBoard b = (PuzzleBoard)obj;
+		return N_ == b.N_ && Arrays.deepEquals(tiles_, b.tiles_);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Arrays.deepHashCode(tiles_);
+	}
+	
+	@Override
+	public String toString() {
+		tiles_[hBlank_][vBlank_] = 0;
+		String ans =  Arrays.deepToString(tiles_) + "\n";
+		tiles_[hBlank_][vBlank_] =  N_ * N_;
+		return ans;
+	}
+	
+	private int[] falttenArray(int[][] tiles_) {
+		int[] v = new int[N_ * N_ - 1];
+		
+		for (int k = 0, i = 0; i < N_; ++i) {
+			for (int j = 0; j < N_; ++j) {
+				if (tiles_[i][j] < N_ * N_) {
+					v[k++] = tiles_[i][j];
+				}
+			}
+		}
+		
+		return v;
+	}
+	
+	private int[][] deepCopy(int[][] tiles_) {
+		int[][] tiles = new int[N_][N_];
+		
+		for (int i = 0; i < N_; ++i) {
+			tiles[i] = Arrays.copyOf(tiles_[i], N_);
+		}
+		
+		return tiles;
+	}
+
+	private boolean isInvalidBoard(int[][] tiles) {
+		if (null == tiles || 0 == tiles.length) {
+			return false;
+		}
+		
+		int N = tiles.length;
+		HashSet<Integer> was = new HashSet<>();
+		for (int i = 0; i < N; ++i) {
+			if (null == tiles[i] || N != tiles[i].length) {
+				return false;
+			}
+			for (int j = 0; j < N; ++j) {
+				if (tiles[i][j] < 0 || tiles[i][j] >= N * N || was.contains(tiles[i][j])) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 }

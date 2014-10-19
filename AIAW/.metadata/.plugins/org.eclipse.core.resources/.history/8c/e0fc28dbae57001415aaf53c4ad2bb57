@@ -1,0 +1,14 @@
+package Demo;
+
+import search.PuzzleBoard;
+import search.PuzzleSolver;
+
+public class Demo {
+	public static void main(String[] args) {
+	
+		int[][] init;
+	
+		System.out.println(new PuzzleSolver(new PuzzleBoard(init)));
+	}
+
+}

@@ -1,0 +1,6 @@
+package search;
+
+public class PuzzleBoard {
+	private int N;
+	private int[][] tiles_;
+}

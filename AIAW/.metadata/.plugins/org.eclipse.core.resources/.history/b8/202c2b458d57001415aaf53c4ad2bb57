@@ -1,0 +1,17 @@
+package search;
+
+public class PuzzleBoard {
+	private int N;
+	private int[][] tiles_;
+	
+	public PuzzleBoard(int[][] tiles) {
+		if (isInvalidBoard(tiles)) {
+			throw new IllegalArgumentException("Invalid board: " + toString());
+		}
+	}
+
+	private boolean isInvalidBoard(int[][] tiles) {
+		N = tiles.length;
+		return false;
+	}
+}

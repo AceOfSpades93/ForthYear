@@ -1,0 +1,14 @@
+package search;
+
+public class PuzzleSolver {
+	PuzzleBoard initial;
+	
+	public PuzzleSolver(PuzzleBoard initial) {
+		if (null == initial) {
+			throw new IllegalArgumentException("Null puzzleboard presented");
+		}
+		
+		this.initial = initial.copy();
+		
+	}
+}

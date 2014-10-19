@@ -1,0 +1,21 @@
+package Demo;
+
+import java.util.Iterator;
+
+import search.PuzzleBoard;
+
+public class Demo {
+	public static void main(String[] args) {
+     int[][] init = {
+	    {1,  2,  3,  4},
+		{5,  6,  7,  8},
+		{9,  10, 11, 12},
+		{13, 14, 15, 16}
+	 };
+	 
+     PuzzleBoard b = new PuzzleBoard(init);
+     PuzzleSolver solver = new PuzzleSolver(new PuzzleBoard(init));
+     Iterator<PuzzleBoard> sol = new PuzzleBoard()
+		
+   }
+}

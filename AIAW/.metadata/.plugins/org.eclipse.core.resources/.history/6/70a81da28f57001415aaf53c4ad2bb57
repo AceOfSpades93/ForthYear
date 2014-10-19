@@ -1,0 +1,78 @@
+package search;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+public class PuzzleBoard {
+	private int N;
+	private int hBlank = -1;
+	private int vBlank = -1;
+	private int[][]  tiles_;
+	
+	public PuzzleBoard(int[][] tiles) {
+		if (isInvalidBoard(tiles)) {
+			throw new IllegalArgumentException("Invalid board: " + toString());
+		}
+		
+		N = tiles.length;
+		tiles_ = deepCopy();
+		
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				if (0 == tiles[i][j] || N * N == tiles[i][j]) {
+					hBlank = i;
+					vBlank = j;
+					break;
+				}
+			}
+			if (-1 != hBlank && -1 != vBlank) {
+				break;
+			}
+		}
+	}
+	
+	public int hammilton() {
+		int dist = 0;
+		
+		for (int i = 0; i < N; ++i) {
+			for (int j = 0; j < N; ++j) {
+				if (i * N + j + 1 != tiles_[i][j]) {
+					++dist;
+				}
+			}
+		}
+		
+		return dist;
+	}
+	
+	private int[][] deepCopy() {
+		int[][] tiles = new int[N][N];
+		
+		for (int i = 0; i < N; ++i) {
+			tiles[i] = Arrays.copyOf(tiles_[i], N);
+		}
+		
+		return tiles;
+	}
+
+	private boolean isInvalidBoard(int[][] tiles) {
+		if (null == tiles || 0 == tiles.length) {
+			return false;
+		}
+		
+		int N = tiles.length;
+		HashSet<Integer> was = new HashSet<>();
+		for (int i = 0; i < N; ++i) {
+			if (null == tiles[i] || N != tiles[i].length) {
+				return false;
+			}
+			for (int j = 0; j < N; ++j) {
+				if (tiles[i][j] < 0 || tiles[i][j] >= N * N || was.contains(tiles[i][j])) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+}

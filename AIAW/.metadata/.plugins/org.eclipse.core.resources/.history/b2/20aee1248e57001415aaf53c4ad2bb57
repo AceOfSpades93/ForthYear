@@ -1,0 +1,44 @@
+package search;
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+public class PuzzleBoard {
+	private int N;
+	private int[][] tiles_;
+	
+	public PuzzleBoard(int[][] tiles) {
+		if (isInvalidBoard(tiles)) {
+			throw new IllegalArgumentException("Invalid board: " + toString());
+		}
+	}
+	
+	private int[][] deepCopy() {
+		int[][] tiles = new int[N][N];
+		
+		for (int i = 0; i < N; ++i) {
+			tiles[i] = Arrays.copyOf(tiles_[i], N);
+		}
+	}
+
+	private boolean isInvalidBoard(int[][] tiles) {
+		if (null == tiles) {
+			return false;
+		}
+		
+		int N = tiles.length;
+		HashSet<Integer> was = new HashSet<>();
+		for (int i = 0; i < N; ++i) {
+			if (null == tiles[i] || N != tiles[i].length) {
+				return false;
+			}
+			for (int j = 0; j < N; ++j) {
+				if (tiles[i][j] < 0 || tiles[i][j] >= N * N || was.contains(tiles[i][j])) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+}

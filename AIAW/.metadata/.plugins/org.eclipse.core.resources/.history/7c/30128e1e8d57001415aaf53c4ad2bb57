@@ -1,0 +1,12 @@
+package search;
+
+public class PuzzleBoard {
+	private int N;
+	private int[][] tiles_;
+	
+	public PuzzleBoard(int[][] tiles) {
+		if (null == tiles || isInvalidBoard(tiles)) {
+			throw 
+		}
+	}
+}

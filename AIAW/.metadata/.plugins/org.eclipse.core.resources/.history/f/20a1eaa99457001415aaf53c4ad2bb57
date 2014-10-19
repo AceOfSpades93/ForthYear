@@ -1,0 +1,75 @@
+package search;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.PriorityQueue;
+
+public class PuzzleSolver {
+	PuzzleBoard initial_;
+	List<PuzzleBoard> solution_ = new ArrayList<>();
+	
+	public PuzzleSolver(PuzzleBoard initial) {
+		if (null == initial) {
+			throw new IllegalArgumentException("Null puzzleboard presented");
+		}
+		
+		initial_ = initial.copy();
+		
+		if (initial_.isSolvable()) {
+			solve();
+		}
+		
+	}
+
+	private void solve() {
+		if (initial_.isGoal()) {
+			solution_.add(initial_.copy());
+			return;
+		}
+		
+		PriorityQueue<Node> minPQ = new PriorityQueue<>();
+		HashSet<PuzzleBoard> wasVisited = new HashSet<>();
+		
+		wasVisited.add(initial_);
+		for (minPQ.add(new Node(initial_, 0)); !minPQ.isEmpty(); ) {
+			Node b = minPQ.remove();
+			
+			if (b.b_.isGoal()) {
+				getPath(b);
+				return;
+			}
+			
+			for ()
+			
+		}
+		
+	}
+	
+	private void getPath(Node dest) {
+		
+	}
+	
+	private static class Node implements Comparable<Node> {
+		int cost_;
+		Node prev_;
+		PuzzleBoard b_;
+		
+		public Node(PuzzleBoard b, int cost) {
+			b_ = b;
+			prev_ = null;
+			cost_ = cost;
+		}
+		
+		public Node(PuzzleBoard b, int cost, Node prev) {
+			b_ = b;
+			prev_ = prev;
+			cost_ = cost;
+		}
+
+		@Override
+		public int compareTo(Node o) {
+			return cost_ - o.cost_;
+		}
+	}
+}

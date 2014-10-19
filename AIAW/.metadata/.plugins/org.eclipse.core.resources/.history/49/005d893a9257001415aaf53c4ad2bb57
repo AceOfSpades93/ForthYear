@@ -1,0 +1,12 @@
+package search;
+
+public class PuzzleSolver {
+	
+	
+	public PuzzleSolver(PuzzleBoard initial) {
+		if (null == initial) {
+			throw new IllegalArgumentException("Null puzzleboard presented");
+		}
+		
+	}
+}

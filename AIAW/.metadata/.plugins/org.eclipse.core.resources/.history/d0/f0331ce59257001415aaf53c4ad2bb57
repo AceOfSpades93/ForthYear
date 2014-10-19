@@ -1,0 +1,138 @@
+package search;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
+public class PuzzleBoard {
+	private int N_;
+	private int hBlank = -1;
+	private int vBlank = -1;
+	private int[][]  tiles_;
+	
+	public PuzzleBoard(int[][] tiles) {
+		if (isInvalidBoard(tiles)) {
+			throw new IllegalArgumentException("Invalid board: " + toString());
+		}
+		
+		N_ = tiles.length;
+		tiles_ = deepCopy();
+		
+		for (int i = 0; i < N_; ++i) {
+			for (int j = 0; j < N_; ++j) {
+				if (0 == tiles[i][j] || N_ * N_ == tiles[i][j]) {
+					hBlank = i;
+					vBlank = j;
+					break;
+				}
+			}
+			if (-1 != hBlank && -1 != vBlank) {
+				break;
+			}
+		}
+	}
+	
+	public PuzzleBoard copy() {
+		return new PuzzleBoard(tiles_);
+	}
+	
+	public boolean isSolvable() {
+		return true;
+	}
+	
+	public boolean isGoal() {
+		return 0 == hamming();
+	}
+	
+	public Iterable<PuzzleBoard> neighbors() {
+		int[] dx = {-1, 0, 0, 1};
+		int[] dy = {0, -1, 1, 0};
+		List<PuzzleBoard> v = new ArrayList<>();
+		
+		for (int i = 0; i < dx.length; ++i) {
+			int newHBlank = hBlank + dx[i];
+			int newVBlank = vBlank + dy[i];
+			
+			if (newHBlank < 0 || newVBlank < 0 || newHBlank >= N_ || newVBlank >= N_) {
+				continue;
+			}
+			
+			PuzzleBoard b = copy();
+			int aux = b.tiles_[hBlank][vBlank];
+			b.tiles_[hBlank][vBlank] = b.tiles_[newHBlank][newVBlank];
+			b.tiles_[newHBlank][newVBlank] = aux;
+			b.hBlank = newHBlank;
+			b.vBlank = newVBlank;
+			
+			v.add(b);
+		}
+		
+		return v;
+	}
+	
+	public int hamming() {
+		int dist = 0;
+		
+		for (int i = 0; i < N_; ++i) {
+			for (int j = 0; j < N_; ++j) {
+				if (i * N_ + j + 1 != tiles_[i][j]) {
+					++dist;
+				}
+			}
+		}
+		
+		return dist;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (null == obj || !(obj instanceof PuzzleBoard)) {
+			return false;
+		}
+		PuzzleBoard b = (PuzzleBoard)obj;
+		return N_ != b.N_ && Arrays.deepEquals(tiles_, b.tiles_);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Arrays.deepHashCode(tiles_);
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + "\n" + Arrays.deepToString(tiles_);
+	}
+	
+	private int[][] deepCopy() {
+		int[][] tiles = new int[N_][N_];
+		
+		for (int i = 0; i < N_; ++i) {
+			tiles[i] = Arrays.copyOf(tiles_[i], N_);
+		}
+		
+		return tiles;
+	}
+
+	private boolean isInvalidBoard(int[][] tiles) {
+		if (null == tiles || 0 == tiles.length) {
+			return false;
+		}
+		
+		int N = tiles.length;
+		HashSet<Integer> was = new HashSet<>();
+		for (int i = 0; i < N; ++i) {
+			if (null == tiles[i] || N != tiles[i].length) {
+				return false;
+			}
+			for (int j = 0; j < N; ++j) {
+				if (tiles[i][j] < 0 || tiles[i][j] >= N * N || was.contains(tiles[i][j])) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+}
